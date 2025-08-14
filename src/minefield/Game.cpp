@@ -10,10 +10,11 @@ namespace gameLogic {
             int tempRow = -1;
             int tempCol = -1;
             std::cout << prompt;
-            std::cout << "\nRow (0-" << (maxRow - 1) << "): ";
+            std::cout << "Row (0-" << (maxRow - 1) << "):";
             std::cin >> tempRow;
-            std::cout << "\nColumn (0-" << (maxCol - 1) << "): ";
+            std::cout << "Column (0-" << (maxCol - 1) << "):";
             std::cin >> tempCol;
+            std::cout << '\n';
 
             coordinatesValid = !std::cin.fail() &&
                             tempRow >= 0 && tempRow < maxRow &&
@@ -28,7 +29,6 @@ namespace gameLogic {
                 coord.col = static_cast<unsigned int>(tempCol);
             }
         }
-
         clearInputBuffer();
         return coord;
     }
@@ -96,8 +96,8 @@ namespace gameLogic {
                             gameConstants::Board& gameBoard,
                             std::vector<gameConstants::Coordinates>& detectedMines,
                             std::vector<gameConstants::Coordinates>& selfGuessedMines,
-                            std::vector<gameConstants::Coordinates>& emptyGuesses) 
-    {
+                            std::vector<gameConstants::Coordinates>& emptyGuesses) {
+        // Bound checking done when user imputs data.
         for (const auto& currentGuess : guesses) {
             auto& cell = gameBoard[currentGuess.row][currentGuess.col];
 
@@ -123,7 +123,6 @@ namespace gameLogic {
                                 const std::vector<gameConstants::Coordinates>& p1Guesses,
                                 const std::vector<gameConstants::Coordinates>& p2Guesses) {
         GuessResults results;
-        // Didi suggested bound checking before accessing but i believe it is unnecesary because bound checking is done before when data is asked.
 
         processPlayerGuesses(p1, p2, p1Guesses, gameBoard, results.p1DetectedMines, results.p1SelfGuessedMines, results.p1EmptyGuesses);
         processPlayerGuesses(p2, p1, p2Guesses, gameBoard, results.p2DetectedMines, results.p2SelfGuessedMines, results.p2EmptyGuesses);
@@ -147,7 +146,7 @@ namespace gameLogic {
             gameConstants::Coordinates coord;
             bool validInput = false;
             while (!validInput) {
-                coord = getCoordinatesFromUser(actionDescription + "(" + std::to_string(i + 1) + "): ", boardRows, boardCols);
+                coord = getCoordinatesFromUser(actionDescription + '(' + std::to_string(i + 1) + ")\n", boardRows, boardCols);
                 
                 bool alreadyUsedThisTurn = false;
                 for (const auto& existingCoord : actionsAttempt) { 
@@ -169,16 +168,16 @@ namespace gameLogic {
                 }
             }
         }
-        std::cout << player.name << " has finished " << ".\n"; 
+        std::cout << player.name << " has finished.\n"; 
         return actionsAttempt;
     }
 
     void reportPlayerGuessResults(const Player& guessingPlayer, const Player& opponentPlayer, const GuessResults& allResults) {
         std::cout << "\n--- " << guessingPlayer.name << " Turn results ---\n";
 
-        const std::vector<gameConstants::Coordinates>* detectedMines;
-        const std::vector<gameConstants::Coordinates>* selfGuessedMines;
-        const std::vector<gameConstants::Coordinates>* emptyGuesses;
+        std::vector<gameConstants::Coordinates> const* detectedMines = nullptr;
+        std::vector<gameConstants::Coordinates> const* selfGuessedMines = nullptr;
+        std::vector<gameConstants::Coordinates> const* emptyGuesses = nullptr;
 
         if (guessingPlayer.myMineState == gameConstants::CellState::PLAYER1_MINE) {
             detectedMines = &allResults.p1DetectedMines;
@@ -253,6 +252,7 @@ void runMainLoop() {
     int boardRows = getValidIntInput("Enter the number of rows (24-50): ", gameConstants::MIN_BOARD_DIMENSION_CONST, gameConstants::MAX_BOARD_DIMENSION_CONST);
     int boardCols = getValidIntInput("Enter the number of columns (24-50): ", gameConstants::MIN_BOARD_DIMENSION_CONST, gameConstants::MAX_BOARD_DIMENSION_CONST);
     int numMinesPerPlayer = getValidIntInput("Enter the amount of mines per player (3-8): ", gameConstants::MIN_MINES_CONST, gameConstants::MAX_MINES_CONST);
+    clearConsoleBuffer();
 
     // Initializes the global board
     gameConstants::Board gameBoard(boardRows, std::vector<gameConstants::CellState>(boardCols, gameConstants::CellState::EMPTY));
@@ -267,12 +267,12 @@ void runMainLoop() {
         // Insert mines
         std::cout << "\n===== Turn " << turn << " =====\n";
         prints::printPlaceMinesText(player1);
-        std::vector<gameConstants::Coordinates> p1PlacementsAttempt = gameLogic::getPlayerActionCoordinates(player1, boardRows, boardCols, gameBoard, "mines", player1.minesToPlace);
+        std::vector<gameConstants::Coordinates> p1PlacementsAttempt = gameLogic::getPlayerActionCoordinates(player1, boardRows, boardCols, gameBoard, "MINES", player1.minesToPlace);
         std::cout << "Press Enter to continue...\n";
         clearInputBuffer();
 
         prints::printPlaceMinesText(player2);
-        std::vector<gameConstants::Coordinates> p2PlacementsAttempt = gameLogic::getPlayerActionCoordinates(player2, boardRows, boardCols, gameBoard, "mines", player2.minesToPlace);
+        std::vector<gameConstants::Coordinates> p2PlacementsAttempt = gameLogic::getPlayerActionCoordinates(player2, boardRows, boardCols, gameBoard, "MINES", player2.minesToPlace);
         std::cout << "Press Enter to continue...\n";
         clearInputBuffer();
 
@@ -285,14 +285,14 @@ void runMainLoop() {
         // PLAYER 1
         prints::printGuessText(player1);
         printBoard(gameBoard, boardRows, boardCols, player1);
-        std::vector<gameConstants::Coordinates> p1Guesses = gameLogic::getPlayerActionCoordinates(player1, boardRows, boardCols, gameBoard, "guesses", player2.minesToPlace);
+        std::vector<gameConstants::Coordinates> p1Guesses = gameLogic::getPlayerActionCoordinates(player1, boardRows, boardCols, gameBoard, "GUESSES", player2.minesToPlace);
         std::cout << "Press Enter to continue...\n";
         clearInputBuffer();
 
         // PLAYER 2
         prints::printGuessText(player2);
         printBoard(gameBoard, boardRows, boardCols, player2);
-        std::vector<gameConstants::Coordinates> p2Guesses = gameLogic::getPlayerActionCoordinates(player2, boardRows, boardCols, gameBoard, "guesses", player1.minesToPlace);
+        std::vector<gameConstants::Coordinates> p2Guesses = gameLogic::getPlayerActionCoordinates(player2, boardRows, boardCols, gameBoard, "GUESSES", player1.minesToPlace);
         std::cout << "Press Enter to continue and check the results...\n";
         clearInputBuffer();
 

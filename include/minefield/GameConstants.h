@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#define DEBUG_MODE 
 
 namespace gameConstants {
     enum class CellState {
