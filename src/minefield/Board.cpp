@@ -13,39 +13,39 @@ void printRowNumber(int row) {
     std::cout << std::setw(2) << row << ' ';
 }
 
-const std::string getBoardChar(gameConstants::CellState cellState, bool isUserMine, bool showAll) {
-    if (showAll) {
+std::string const getBoardCharPlayer(gameConstants::CellState cellState, bool isUserMine) {
+    if (isUserMine) {
+        return " M ";
+    } else if (cellState == gameConstants::CellState::GUESSED_EMPTY) {
+        return " X ";
+    } else if (cellState == gameConstants::CellState::DETECTED_MINE) {
+        return " * ";
+    } else {
+        return " . ";
+    }
+}
+
+std::string const getBoardCharOmniscient(gameConstants::CellState cellState) {
         std::string cellStateAsChar;
         switch (cellState) {
-            case gameConstants::CellState::PLAYER1_MINE:
-                cellStateAsChar =  " P1";
-                break;
-            case gameConstants::CellState::PLAYER2_MINE:
-                cellStateAsChar = " P2";
-                break;
-            case gameConstants::CellState::GUESSED_EMPTY:
-                cellStateAsChar = " G "; 
-                break;
-            case gameConstants::CellState::DETECTED_MINE:
-                cellStateAsChar = " * ";
-                break;
-            case gameConstants::CellState::EMPTY: 
-            default: 
-                cellStateAsChar =  " . ";
-                break;
+        case gameConstants::CellState::PLAYER1_MINE:
+            cellStateAsChar = " P1";
+            break;
+        case gameConstants::CellState::PLAYER2_MINE:
+            cellStateAsChar = " P2";
+            break;
+        case gameConstants::CellState::GUESSED_EMPTY:
+            cellStateAsChar = " G ";
+            break;
+        case gameConstants::CellState::DETECTED_MINE:
+            cellStateAsChar = " * ";
+            break;
+        case gameConstants::CellState::EMPTY:
+        default:
+            cellStateAsChar = " . ";
+            break;
         }
         return cellStateAsChar;
-    } else { // Usual output
-        if (isUserMine) {
-            return " M ";
-        } else if (cellState == gameConstants::CellState::GUESSED_EMPTY) {
-            return " X ";
-        } else if (cellState == gameConstants::CellState::DETECTED_MINE) {
-            return " * ";
-        } else {
-            return " . ";
-        }
-    }
 }
 
 void printBoard(const gameConstants::Board& board, int rows, int cols, const Player& currentPlayer, bool showAll) {
@@ -70,7 +70,11 @@ void printBoard(const gameConstants::Board& board, int rows, int cols, const Pla
                     break;
                 }
             }
-            std::cout << getBoardChar(cellState, isUserMine, showAll);
+            if (showAll) {
+                std::cout << getBoardCharOmniscient(cellState);
+            } else {
+                std::cout << getBoardCharPlayer(cellState, isUserMine);
+            }
         }
         std::cout << '\n';
     }
