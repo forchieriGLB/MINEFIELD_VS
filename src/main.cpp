@@ -2,17 +2,23 @@
 #include <minefield/Game.h>
 #include <minefield/Menu.h>
 
-void startPlayerVsPlayer() {
+MenuContinuity startPlayerVsPlayer()
+{
     clearConsoleBuffer();
     runMainLoop();
+    return MenuContinuity::ContinueFlow;
 }
 
-void startPlayerVsAI() {
-    std::cout << "\n[TODO] Player vs AI coming soon!\n";
+MenuContinuity startPlayerVsAI()
+{
+    std::cout << "[TODO] Player vs AI coming soon!\n";
+    return MenuContinuity::ContinueFlow;
 }
 
-void changeLanguage() {
-    std::cout << "\n[TODO] Language settings coming soon!\n";
+MenuContinuity changeLanguage()
+{
+    std::cout << "[TODO] Language settings coming soon!\n";
+    return MenuContinuity::ContinueFlow;
 }
 
 int main() {
@@ -20,8 +26,10 @@ int main() {
     menu.addOption("Officer vs Officer, the battlefield just got personal.", startPlayerVsPlayer);
     menu.addOption("Colonel vs T-1000, let us see if circuits can bleed.", startPlayerVsAI);
     menu.addOption("Communication Protocol", changeLanguage);
-    menu.addOption("Abort Mission", []() { 
-        std::cout << "\nIt is over, Colonel...the battlefield is silent. No survivors. Pulling you out...\n"; });
+    menu.addOption("Abort Mission", []() {
+        std::cout << "\nIt is over, Colonel...the battlefield is silent. No survivors. Pulling you out...\n";
+        return MenuContinuity::BreakFlow;
+        });
 
     menu.run();
     return 0;

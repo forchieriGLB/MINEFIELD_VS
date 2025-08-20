@@ -10,7 +10,7 @@ TEST(CheckWinCondition, should_return_none_if_no_player_detected_all_mines)
 
     auto result = checkWinCondition(p1, p2, 3);
 
-    ASSERT_EQ(result, WinCheckResult::None);
+    EXPECT_EQ(result, WinCheckResult::None);
 }
 
 TEST(CheckWinCondition, should_return_winP1_if_player1_detected_all_mines)
@@ -20,7 +20,7 @@ TEST(CheckWinCondition, should_return_winP1_if_player1_detected_all_mines)
 
     auto result = checkWinCondition(p1, p2, 3);
 
-    ASSERT_EQ(result, WinCheckResult::WinP1);
+    EXPECT_EQ(result, WinCheckResult::WinP1);
 }
 
 TEST(CheckWinCondition, should_return_draw_if_both_players_detected_all_mines)
@@ -30,7 +30,7 @@ TEST(CheckWinCondition, should_return_draw_if_both_players_detected_all_mines)
 
     auto result = checkWinCondition(p1, p2, 3);
 
-    ASSERT_EQ(result, WinCheckResult::Draw);
+    EXPECT_EQ(result, WinCheckResult::Draw);
 }
 
 }
