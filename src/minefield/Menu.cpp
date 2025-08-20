@@ -4,7 +4,7 @@
 #include <limits>
 
 
-void Menu::addOption(std::string const& text, std::function<void()> action) {
+void Menu::addOption(std::string const& text, std::function<MenuContinuity()> action) {
     mOptions.push_back({text, action});
 }
 
@@ -18,11 +18,11 @@ void Menu::display() const {
 }
 
 void Menu::run() {
-    bool exitMenu = false;
+    MenuContinuity flow = MenuContinuity::ContinueFlow;
     display();
-    while (!exitMenu) {
+    while (flow == MenuContinuity::ContinueFlow) {
         std::cout << "Colonel, make the call our survival is waiting on your orders:";
-        int choice;
+        int choice = -99;
         std::cin >> choice;
 
         if (std::cin.fail() || choice < 1 || choice > static_cast<int>(mOptions.size())) {
@@ -32,11 +32,6 @@ void Menu::run() {
             continue;
         }
 
-        if (mOptions[choice - 1].text == "Abort Mission")
-        {
-            exitMenu = true;
-        }
-
-        mOptions[choice - 1].action();
+        flow = mOptions[choice - 1].action();
     }
 }
