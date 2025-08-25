@@ -32,5 +32,6 @@ TEST(CheckWinCondition, should_return_draw_if_both_players_detected_all_mines)
 
     EXPECT_EQ(result, WinCheckResult::Draw);
 }
-
 }
+
+
